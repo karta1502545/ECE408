@@ -406,10 +406,8 @@ Use
     
     rai -p <project folder> --submit=m3
     
-to submit your project folder. Make sure to upload your `report.pdf` on Canvas: https://canvas.illinois.edu/courses/38813/quizzes/291356. Make sure you answer all items listed above for this milestone, and include your name, NetID, and class section.
+to submit your project folder. Make sure to upload your `report.pdf` on Canvas: https://canvas.illinois.edu/courses/38813/quizzes/291356. Make sure you answer all items listed above for this milestone, and include your name, NetID, and class section. 
 
-
-**All of the optimizations that you have done should be stored inside the Project folder. You can either put it inside comments in "new-forward.cu", or create separate files for each optimization, such as "opt1.cu", "opt2.cu". As long as we can find it inside the Project Folder. The best overall optimization that you want to submit of course still goes into "new-forward.cu".**
 ## Optimizations
 
 These are the list of optimizations we will consider valid for Milestone 3. You should implement 10 points worth of optimizations in order to recieve full credit for Milestone 3. If you would like to impelement a potential optimization that is not on this list, please consult a TA or instructor beforehand to verify that the optimization is valid and to assign it a point value.
@@ -423,12 +421,11 @@ These are the list of optimizations we will consider valid for Milestone 3. You 
 * Multiple kernel implementations for different layer sizes (**1 point**)
 * Input channel reduction: tree (**3 point**)
 * Input channel reduction: atomics (**2 point**)
-* FP16 arithmetic. (note this can modify model accuracy slightly) (**4 points**)
+* Fixed point (FP16) arithmetic. (note this can modify model accuracy slightly) (**4 points**)
 * Using Streams to overlap computation with data transfer (**4 points**)
 * An advanced matrix multiplication algorithm (register-tiled, for example) (**5 points**)
 * Using Tensor Cores to speed up matrix multiplication (**5 points**)
 * Overlap-Add method for FFT-based convolution (note this is **very** hard, and may not yield a large performace increase due to mask size) (**8 points**)
-
 
 ## Rubric
 
@@ -449,32 +446,13 @@ So please always do `git pull` to update the project instructions.
     * Correctness ( 1.5% for each additional optimization point )
     * Report ( 1% for each additional optimization point )
 
-## Final Competition
-***Deadline: Dec 8th, 8:00 PM CST***
-
-For the week after PM3 is due,
-you can compete performance of your convolution kernel with other students.
-We will award extra credits to top performers in this competition.
-The metric used for this competition will be **the sum of OP Times**, and you can see the current standings using the `rai -p <project_directory> ranking` command. Note that the only submissions that will be counted towards the ranking are ones that run the network with a batch size of 10000 (no profiling). Use `rai -p <project_directory> --queue rai_amd64_exclusive` to submit to the competition. In your `rai_build.yml`, use `- /bin/bash -c "./final"`. 
-
-Since we want you to focus on kernel optimizations (Metric is Sum of Op Times), host side optimizations like steams overlap will have little effect. **All your gpu kernel calls needs to take place inside `conv_forward_gpu()`, we will check this after the competition deadline, and violators will be excluded from the competition**. This means if your implementation (such as streaming) moves kernel execution somewhere else, you are not allowed to use it for submission.
-
-
-The leaderboard is quite dynamic since it's updated upon each valid submission. We will finalize standing of each participant by taking average of mulitple runs. Your code from latest run will be used to rank.
-Note that it is also possible that some participants develop in private and submit their ranking in the last minute.
-So don't be suprised if you fall out of certain bracket in the end.
-
-1. Top 20 on leaderboard ( 1% towards final grade )
-2. Top 50 on leaderboard ( 0.6% towards final grade )
-3. Top 80 on leaderboard ( 0.2% towards final grade )
-
 
 ## Appendix
 
 ### Skeleton Code Description
 `custom/cpu-new-forward.cc` and `custom/new-forward.cu` containes skeleton implementations for the CPU and GPU convolutions respectively. You can complete the project by modifying these two files only. `custom/cpu-new-forward.h` and `custom/gpu-new-forward.h` are the respective header files. You need not modify these files unless you need to declare your own functions.
 
-The code in `m1.cc`, `m2.cc`, `m3.cc`, and `final.cc` are the top level files that are executed for each milestone. You should not be modifying these files.
+The code in `m1.cc`, `m2.cc`, `m3.cc`, `m3_prof.cc` and `final.cc` are the top level files that are executed for each milestone. You should not be modifying these files.
 
 ### Checking for Errors
 

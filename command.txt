@@ -1,0 +1,18 @@
+1. summit final code to server(in ece directory)
+rai -p ./MP --submit MP
+
+2. view history
+rai -p . history
+
+3. 
+rai -p . --queue rai_amd64_exclusive queued
+
+rai -p ./MP
+
+當前目錄的絕對路徑：pwd
+
+Note:
+1. MP0
+把rai放到ECE408裡面，改環境變數，改執行權限
+vim ~/.zshrc
+export PATH=$PATH:"/Users/lee/Desktop/ECE408/"

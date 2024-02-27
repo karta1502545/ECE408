@@ -1,4 +1,7 @@
 #include <wb.h>
+// #include <iostream>
+// using namespace std;
+#define BLOCK_SIZE 512 //@@ You can change this
 
 #define wbCheck(stmt)                                                     \
   do {                                                                    \
@@ -12,15 +15,33 @@
 
 __global__ void spmvJDSKernel(float *out, int *matColStart, int *matCols,
                               int *matRowPerm, int *matRows,
-                              float *matData, float *vec, int dim) {
+                              float *matData, float *vec, int dim, int sizeOfMatColStart) { 
   //@@ insert spmv kernel for jds format
+  // dim => num_rows, out => y, vec => x
+  int row = blockDim.x * blockIdx.x + threadIdx.x;
+  if (row < dim) {
+    float dot = 0;
+    unsigned int sec = 0;
+    while (matRows[row] > sec) {
+    // while (sec+1 < sizeOfMatColStart && (matColStart[sec+1] - matColStart[sec] > row)) { // this cannot work since we do not have the last index of sec (in lec20 p25, we would only have [0,3,6], not [0,3,6,7])
+      dot += matData[matColStart[sec]+row] * vec[matCols[matColStart[sec]+row]];
+      sec += 1;
+    }
+    out[matRowPerm[row]] = dot;
+  }
 }
 
 static void spmvJDS(float *out, int *matColStart, int *matCols,
                     int *matRowPerm, int *matRows, float *matData,
-                    float *vec, int dim) {
+                    float *vec, int dim, int sizeOfMatColStart) {
 
   //@@ invoke spmv kernel for jds format
+  // dim maybe larger than 1024, grid size should be ceil(dim * 1.0 / BlockSize)
+  // BlockSize can be 1024?
+  // why we need matRows?
+  dim3 DimGrid(ceil(dim / float(BLOCK_SIZE)), 1, 1);
+  dim3 DimBlock(BLOCK_SIZE, 1, 1);
+  spmvJDSKernel<<<DimGrid, DimBlock>>>(out, matColStart, matCols, matRowPerm, matRows, matData, vec, dim, sizeOfMatColStart);
 }
 
 int main(int argc, char **argv) {
@@ -84,7 +105,7 @@ int main(int argc, char **argv) {
 
   wbTime_start(Compute, "Performing CUDA computation");
   spmvJDS(deviceOutput, deviceJDSColStart, deviceJDSCols, deviceJDSRowPerm, deviceJDSRows,
-          deviceJDSData, deviceVector, dim);
+          deviceJDSData, deviceVector, dim, maxRowNNZ);
   cudaDeviceSynchronize();
   wbTime_stop(Compute, "Performing CUDA computation");
 
@@ -104,7 +125,15 @@ int main(int argc, char **argv) {
   wbTime_stop(GPU, "Freeing GPU Memory");
 
   wbSolution(args, hostOutput, dim);
-
+  // cout << maxRowNNZ << endl;
+  // for (int i=0; i<maxRowNNZ; i++) {
+  //   cout << hostJDSColStart[i] << " ";
+  // }
+  // cout << endl;
+  // for (int i=0; i<dim; i++) {
+  //   cout << hostJDSRows[i] << " ";
+  // }
+  // cout << endl;
   free(hostCSRCols);
   free(hostCSRRows);
   free(hostCSRData);

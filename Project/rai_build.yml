@@ -16,8 +16,17 @@ commands:
       - /bin/bash -c "cp -rv /src/custom/* /ece408/project/src/layer/custom" # copy custom layers to mini-dnn file tree
       - /bin/bash -c "cmake -DCMAKE_CXX_FLAGS=-pg /ece408/project/ && make -j8"
       # You may modify the commands below. Uncomment/Comment lines based on the milestone
-      - /bin/bash -c "./m1 100"
-      #- /bin/bash -c "./m2"
-      #- /bin/bash -c "./m3"
+      # - /bin/bash -c "cmake /ece408/project/ && make -j8" # PROFILING
+      # - /bin/bash -c "nsys profile --stats=true ./m3" # PROFILING
+      # - nv-nsight-cu-cli --section ".*" -o nsight_file ./m3 # PROFILING
+      # - /bin/bash -c "./m1 1000"
+      # - /bin/bash -c "time ./m1 1000"
+      # - /bin/bash -c "time ./m1 1000 && gprof -Q m1 gmon.out > outfile"
+      # - /bin/bash -c "time ./m2 5000"
+      # - /bin/bash -c "cuda-memcheck ./m2"
+      # - /bin/bash -c "./m3 5000"
+      # - /bin/bash -c "time ./m3 100"
+      # - /bin/bash -c "time ./m3 1000"
+      # - /bin/bash -c "./m3 5000"
       #- /bin/bash -C "./m3_prof"
       #- /bin/bash -c "./final"
